@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
+import { View, TextInput, Button, Alert, Text } from 'react-native';
 import axios, { AxiosError } from 'axios';
 import { StackNavigationProp } from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 type RegisterProps = {
     navigation: StackNavigationProp<any>;
@@ -28,22 +29,62 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 
     return (
         <View style={{ padding: 20 }}>
-            <TextInput
-                placeholder="Nombre de Usuario"
-                value={username}
-                onChangeText={setUsername}
-                style={{ marginBottom: 10, borderWidth: 1, padding: 10 }}
-            />
-            <TextInput
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                style={{ marginBottom: 10, borderWidth: 1, padding: 10 }}
-            />
-            <Button title="Registrar" onPress={handleRegister} />
+            {/* Icono en la parte superior */}
+            <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                <Icon name="user-plus" size={50} color="#000" />
+                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Registrarse</Text>
+            </View>
+
+            {/* Username Input con icono a la izquierda */}
+            <View style={{
+                flexDirection: 'row', 
+                alignItems: 'center', 
+                marginBottom: 20, 
+                borderBottomWidth: 1, 
+                borderColor: '#000'
+            }}>
+                <Icon name="user" size={20} color="#000" style={{ marginRight: 10 }} />
+                <TextInput
+                    placeholder="Nombre de Usuario / Correo Electrónico"
+                    value={username}
+                    onChangeText={setUsername}
+                    style={{
+                        flex: 1, 
+                        paddingHorizontal: 10, 
+                        paddingVertical: 5, 
+                        fontSize: 16
+                    }}
+                />
+            </View>
+
+            {/* Password Input con icono a la izquierda */}
+            <View style={{
+                flexDirection: 'row', 
+                alignItems: 'center', 
+                marginBottom: 20, 
+                borderBottomWidth: 1, 
+                borderColor: '#000'
+            }}>
+                <Icon name="lock" size={20} color="#000" style={{ marginRight: 10 }} />
+                <TextInput
+                    placeholder="Contraseña"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    style={{
+                        flex: 1, 
+                        paddingHorizontal: 10, 
+                        paddingVertical: 5, 
+                        fontSize: 16
+                    }}
+                />
+            </View>
+
+            {/* Botón de registro */}
+            <Button title="Registrarse" onPress={handleRegister} />
         </View>
     );
 };
 
 export default Register;
+

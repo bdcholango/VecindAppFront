@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
+import { View, TextInput, Button, Alert, Image, TouchableOpacity, Text } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import axios, { AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -31,22 +32,43 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
     };
 
     return (
-        <View style={{ padding: 20 }}>
-            <TextInput
-                placeholder="Nombre de Usuario"
-                value={username}
-                onChangeText={setUsername}
-                style={{ marginBottom: 10, borderWidth: 1, padding: 10 }}
+        <View style={{ padding: 20, alignItems: 'center' }}>
+            {/* Logo */}
+            <Image 
+                source={require('../assets/logo1.png')} // Cambia la ruta según la ubicación del logo
+                style={{ width: 300, height: 200, marginBottom: 20 }}
+                resizeMode="contain"
             />
-            <TextInput
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                style={{ marginBottom: 10, borderWidth: 1, padding: 10 }}
-            />
+
+            {/* Inputs */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, marginBottom: 15, width: '100%' }}>
+                <Icon name="user" size={20} style={{ marginRight: 10 }} />
+                <TextInput
+                    placeholder="Nombre de Usuario / Correo Electrónico"
+                    value={username}
+                    onChangeText={setUsername}
+                    style={{ flex: 1, paddingVertical: 8 }}
+                />
+            </View>
+            
+            <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, marginBottom: 15, width: '100%' }}>
+                <Icon name="lock" size={20} style={{ marginRight: 10 }} />
+                <TextInput
+                    placeholder="Contraseña"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    style={{ flex: 1, paddingVertical: 8 }}
+                />
+            </View>
+
+            {/* Botones */}
             <Button title="Iniciar Sesión" onPress={handleLogin} />
-            <Button title="Registrar" onPress={() => navigation.navigate('Register')} />
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={{ marginTop: 10, color: 'blue', fontSize: 16 }}>
+                    ¿No tienes una cuenta? Regístrate aquí
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 };
