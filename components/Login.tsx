@@ -23,7 +23,8 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
                 password,
             });
 
-            await AsyncStorage.setItem('userToken', response.data.token);
+            await AsyncStorage.setItem('userToken', response.data.accessToken);
+            await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
             Alert.alert('Inicio de Sesión Exitoso', 'Bienvenido!');
             navigation.navigate('Home');
         } catch (error) {
