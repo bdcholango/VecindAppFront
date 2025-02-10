@@ -1,33 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { isAuthenticated } from '../utils/authMiddleware';
+import NoticiasScreen from '../components/NoticiasScreen';
+import PublicacionesScreen from '../components/PublicacionesScreen';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+const Tab = createBottomTabNavigator();
 
 type HomeProps = {
     navigation: StackNavigationProp<any>;
 };
 
 const Home: React.FC<HomeProps> = ({ navigation }) => {
-    const [loading, setLoading] = useState(true); // Estado para verificar la autenticación
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const checkAuth = async () => {
             const authStatus = await isAuthenticated();
             if (!authStatus) {
-                navigation.replace('Login'); // Si no está autenticado, redirigir a Login
+                navigation.replace('Login');
             } else {
-                setLoading(false); // Si está autenticado, mostrar la pantalla
+                setLoading(false);
             }
         };
-
         checkAuth();
     }, [navigation]);
-
-    const handleLogout = async () => {
-        await AsyncStorage.removeItem('userToken');
-        navigation.replace('Login');
-    };
 
     if (loading) {
         return (
@@ -38,10 +38,26 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
     }
 
     return (
-        <View style={{ padding: 20 }}>
-            <Text>Bienvenido a VecindApp!</Text>
-            <Button title="Cerrar Sesión" onPress={handleLogout} />
-        </View>
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
+            <Tab.Screen 
+                name="Noticias" 
+                component={NoticiasScreen} 
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <FontAwesome5 name="newspaper" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tab.Screen 
+                name="Publicaciones" 
+                component={PublicacionesScreen} 
+                options={{
+                    tabBarIcon: ({ color, size }) => (
+                        <FontAwesome5 name="plus-circle" size={size} color={color} />
+                    ),
+                }}
+            />
+        </Tab.Navigator>
     );
 };
 
