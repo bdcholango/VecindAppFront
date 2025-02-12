@@ -11,12 +11,14 @@ export const isAuthenticated = async (): Promise<boolean> => {
         const currentTime = Date.now() / 1000;
 
         if (decoded.exp < currentTime) {
-            return await refreshToken(); // Si el token ha expirado, intenta renovarlo
+            console.log('⚠️ Token expirado, intentando refrescar...');
+            return await refreshToken(); // ✅ Intentar renovar el token
         }
 
+        console.log('✅ Usuario autenticado.');
         return true;
     } catch (error) {
-        console.error('Error verificando autenticación:', error);
+        console.error('❌ Error verificando autenticación:', error);
         return false;
     }
 };

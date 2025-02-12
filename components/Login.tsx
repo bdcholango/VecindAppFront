@@ -13,6 +13,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null); // Estado para mostrar errores
+    const [secureText, setSecureText] = useState(true); // Estado para alternar la visibilidad de la contraseña
 
     const handleLogin = async () => {
         setErrorMessage(null); // Resetear mensaje de error antes de una nueva petición
@@ -41,7 +42,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
         <View style={{ padding: 20, alignItems: 'center' }}>
             <Image 
                 source={require('../assets/logo1.png')}
-                style={{ width: 300, height: 200, marginBottom: 20 }}
+                style={{ width: 300, height: 300, marginBottom: 0 }}
                 resizeMode="contain"
             />
 
@@ -50,7 +51,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
                     {errorMessage}
                 </Text>
             )}
-
+            {/* Campo de usuario */}
             <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, marginBottom: 15, width: '100%' }}>
                 <Icon name="user" size={20} style={{ marginRight: 10 }} />
                 <TextInput
@@ -61,15 +62,24 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
                 />
             </View>
 
+            
             <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, marginBottom: 15, width: '100%' }}>
                 <Icon name="lock" size={20} style={{ marginRight: 10 }} />
                 <TextInput
                     placeholder="Contraseña"
                     value={password}
                     onChangeText={setPassword}
-                    secureTextEntry
+                    secureTextEntry={secureText}
                     style={{ flex: 1, paddingVertical: 8 }}
                 />
+                <TouchableOpacity onPress={() => setSecureText(!secureText)}>
+                    <Icon 
+                        name={secureText ? 'eye' : 'eye-slash'} 
+                        size={20} 
+                        color="gray" 
+                        style={{ marginLeft: 10 }} 
+                    />
+                </TouchableOpacity>
             </View>
 
             <Button title="Iniciar Sesión" onPress={handleLogin} />
@@ -84,3 +94,4 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
 };
 
 export default Login;
+

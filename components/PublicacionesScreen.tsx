@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as Notifications from 'expo-notifications';
 import { FontAwesome5 } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const PublicacionesScreen = () => {
+type PublicacionesScreenProps = {
+    navigation: StackNavigationProp<any>;
+};
+
+const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [location, setLocation] = useState('');
@@ -69,7 +75,22 @@ const PublicacionesScreen = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
+
+            // ✅ Enviar notificación local en Expo Go
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: '📢 Publicación creada',
+                    body: 'Tu publicación se ha creado correctamente 🎉',
+                    sound: true,
+                },
+                trigger: null, // Muestra la notificación inmediatamente
+            });
+
             Alert.alert('Éxito', 'Publicación creada exitosamente');
+
+            // ✅ Redirigir a NoticiasScreen después de la publicación
+            navigation.navigate('Noticias');
+
         } catch (error) {
             Alert.alert('Error', 'No se pudo crear la publicación');
         }
@@ -173,5 +194,3 @@ const styles = StyleSheet.create({
 });
 
 export default PublicacionesScreen;
-
-

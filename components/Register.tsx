@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, Text } from 'react-native';
+import { View, TextInput, Button, Alert, Text, TouchableOpacity } from 'react-native';
 import axios, { AxiosError } from 'axios';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -12,6 +12,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [secureText, setSecureText] = useState(true); // Estado para mostrar u ocultar la contraseña
 
     const handleRegister = async () => {
         setErrorMessage(null); // Resetear mensaje de error antes de enviar solicitud
@@ -36,8 +37,8 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
 
     return (
         <View style={{ padding: 20 }}>
-            <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                <Icon name="user-plus" size={50} color="#000" />
+            <View style={{ alignItems: 'center',height: 250, marginBottom: 10 }}>
+                <Icon name="user-plus" size={200} color="#000" />
                 <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Registrarse</Text>
             </View>
 
@@ -47,6 +48,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
                 </Text>
             )}
 
+            {/* Campo de Nombre de Usuario */}
             <View style={{
                 flexDirection: 'row', 
                 alignItems: 'center', 
@@ -63,6 +65,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
                 />
             </View>
 
+            {/* Campo de Contraseña con icono de Visualización */}
             <View style={{
                 flexDirection: 'row', 
                 alignItems: 'center', 
@@ -75,9 +78,17 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
                     placeholder="Contraseña"
                     value={password}
                     onChangeText={setPassword}
-                    secureTextEntry
+                    secureTextEntry={secureText}
                     style={{ flex: 1, paddingHorizontal: 10, paddingVertical: 5, fontSize: 16 }}
                 />
+                <TouchableOpacity onPress={() => setSecureText(!secureText)}>
+                    <Icon 
+                        name={secureText ? 'eye' : 'eye-slash'} 
+                        size={20} 
+                        color="gray" 
+                        style={{ marginLeft: 10 }} 
+                    />
+                </TouchableOpacity>
             </View>
 
             <Button title="Registrarse" onPress={handleRegister} />

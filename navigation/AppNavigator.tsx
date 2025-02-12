@@ -16,6 +16,7 @@ const AppNavigator = () => {
     useEffect(() => {
         const checkLoginStatus = async () => {
             const authStatus = await isAuthenticated();
+            console.log('🔍 Estado de autenticación:', authStatus); // ✅ Verificar si devuelve true o false
             setIsLoggedIn(authStatus);
         };
 
@@ -33,9 +34,9 @@ const AppNavigator = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName={isLoggedIn ? "Home" : "Login"}>
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Register" component={Register} />
-                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+                <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+                <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );
