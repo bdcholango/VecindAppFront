@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Alert, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Notifications from 'expo-notifications';
+import * as Location from 'expo-location';
+import { Linking } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,6 +20,24 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
     const [date, setDate] = useState('');
     const [image, setImage] = useState<string | null>(null);
     const [type, setType] = useState('evento');
+
+    // ✅ Obtener la ubicación y actualizar el input
+    const handleGetLocation = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert('Permiso Denegado', 'Se necesita acceso a la ubicación para obtener la dirección.');
+            return;
+        }
+
+        const loc = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = loc.coords;
+        const newLocation = `${latitude}, ${longitude}`;
+        setLocation(newLocation); // ✅ Guardar la ubicación en el input
+
+        // ✅ Abrir Google Maps con la ubicación
+        const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+        Linking.openURL(url);
+    };
 
     const pickImage = async (source: 'camera' | 'gallery') => {
         let result;
@@ -76,19 +96,16 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
                 },
             });
 
-            // ✅ Enviar notificación local en Expo Go
             await Notifications.scheduleNotificationAsync({
                 content: {
                     title: '📢 Publicación creada',
                     body: 'Tu publicación se ha creado correctamente 🎉',
                     sound: true,
                 },
-                trigger: null, // Muestra la notificación inmediatamente
+                trigger: null,
             });
 
             Alert.alert('Éxito', 'Publicación creada exitosamente');
-
-            // ✅ Redirigir a NoticiasScreen después de la publicación
             navigation.navigate('Noticias');
 
         } catch (error) {
@@ -105,8 +122,18 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
             <TextInput value={description} onChangeText={setDescription} style={styles.input} placeholder="Ingrese la descripción" multiline />
             
             <Text style={styles.label}>Ubicación:</Text>
-            <TextInput value={location} onChangeText={setLocation} style={styles.input} placeholder="Ingrese la ubicación" />
-            
+            <View style={styles.locationContainer}>
+                <TextInput 
+                    value={location} 
+                    onChangeText={setLocation} 
+                    style={[styles.input, { flex: 1 }]} 
+                    placeholder="Ubicación" 
+                />
+                <TouchableOpacity onPress={handleGetLocation} style={styles.mapButton}>
+                    <FontAwesome5 name="map-marker-alt" size={24} color="white" />
+                </TouchableOpacity>
+            </View>
+
             <Text style={styles.label}>Fecha:</Text>
             <TextInput value={date} onChangeText={setDate} style={styles.input} placeholder="Ingrese la fecha" />
             
@@ -155,6 +182,20 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         marginBottom: 15,
     },
+    locationContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 15,
+    },
+    mapButton: {
+        backgroundColor: '#ff5733',
+        padding: 10,
+        borderRadius: 8,
+        marginLeft: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
@@ -194,3 +235,4 @@ const styles = StyleSheet.create({
 });
 
 export default PublicacionesScreen;
+
