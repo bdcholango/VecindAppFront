@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, Linking, StyleSheet, RefreshControl } from 'react-native';
+import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, Linking, StyleSheet, RefreshControl, Animated, Easing } from 'react-native';
 import axios from 'axios';
 
 type Publication = {
@@ -8,7 +8,7 @@ type Publication = {
     description: string;
     location: string;
     image?: string;
-    user: {
+    user?: {
         username: string;
     };
 };
@@ -16,46 +16,81 @@ type Publication = {
 const NoticiasScreen = () => {
     const [publicaciones, setPublicaciones] = useState<Publication[]>([]);
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
     const [refreshing, setRefreshing] = useState(false);
+    const [page, setPage] = useState(1);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const [totalPages, setTotalPages] = useState(1);
+    const skeletonOpacity = useState(new Animated.Value(0.3))[0];
 
     useEffect(() => {
-        fetchPublicaciones(1, true); // ✅ Cargar la primera página al iniciar
+        fetchPublicaciones(1, true); // ✅ Carga la primera página
+        startSkeletonAnimation();
     }, []);
 
-    // ✅ Función para obtener publicaciones con paginación desde el backend
+    // ✅ Animación del Skeleton Loader
+    const startSkeletonAnimation = () => {
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(skeletonOpacity, {
+                    toValue: 1,
+                    duration: 800,
+                    easing: Easing.linear,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(skeletonOpacity, {
+                    toValue: 0.3,
+                    duration: 800,
+                    easing: Easing.linear,
+                    useNativeDriver: true,
+                }),
+            ])
+        ).start();
+    };
+
+    // ✅ Función para obtener publicaciones con paginación
     const fetchPublicaciones = async (pageNumber: number, reset = false) => {
-        if (pageNumber > totalPages) return; // No cargar más si ya estamos en la última página
+        if (pageNumber > totalPages) return; // ✅ No seguir si ya estamos en la última página
 
         try {
-            setLoading(true);
+            if (reset) {
+                setLoading(true);
+            } else {
+                setLoadingMore(true);
+            }
+
             const response = await axios.get(`http://192.168.100.10:5000/api/publications?page=${pageNumber}&limit=5`);
 
-            setPublicaciones((prev) =>
-                reset ? response.data.publications : [...prev, ...response.data.publications]
-            );
-            setTotalPages(response.data.totalPages);
-            setPage(response.data.currentPage);
+            if (response.data && Array.isArray(response.data.publications)) {
+                setPublicaciones(prev =>
+                    reset ? response.data.publications : [...prev, ...response.data.publications]
+                );
+                setTotalPages(response.data.totalPages);
+                setPage(response.data.currentPage);
+            } else {
+                console.error("Formato de datos inesperado:", response.data);
+            }
         } catch (error) {
             console.error('Error cargando publicaciones:', error);
         } finally {
-            setLoading(false);
+            if (reset) {
+                setLoading(false);
+            }
+            setLoadingMore(false);
         }
     };
 
-    // ✅ Función para cargar más publicaciones cuando se llega al final
-    const loadMore = () => {
-        if (!loading && page < totalPages) {
-            fetchPublicaciones(page + 1);
-        }
-    };
-
-    // ✅ Función para refrescar la lista al hacer swipe hacia abajo
+    // ✅ Función para refrescar (swipe down)
     const onRefresh = async () => {
         setRefreshing(true);
-        await fetchPublicaciones(1, true); // Cargar desde la primera página
+        await fetchPublicaciones(1, true); // ✅ Carga desde la primera página
         setRefreshing(false);
+    };
+
+    // ✅ Función para cargar más publicaciones cuando se hace scroll hasta el final
+    const loadMore = () => {
+        if (!loadingMore && page < totalPages) {
+            fetchPublicaciones(page + 1);
+        }
     };
 
     // ✅ Función para abrir Google Maps según el formato de ubicación
@@ -70,31 +105,47 @@ const NoticiasScreen = () => {
 
     return (
         <View style={styles.container}>
-            <FlatList
-                data={publicaciones}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <Text style={styles.title}>{item.title}</Text>
-                        <Text style={styles.description}>{item.description}</Text>
-                        <Text style={styles.user}>Publicado por: {item.user.username}</Text>
+            {loading ? (
+                // ✅ Skeleton Loader mientras se cargan las publicaciones
+                <FlatList
+                    data={[1, 2, 3, 4, 5]} // Simulamos 5 elementos vacíos
+                    keyExtractor={(item) => `skeleton-${item}`}
+                    renderItem={() => (
+                        <View style={styles.card}>
+                            <Animated.View style={[styles.skeletonTitle, { opacity: skeletonOpacity }]} />
+                            <Animated.View style={[styles.skeletonText, { opacity: skeletonOpacity }]} />
+                            <Animated.View style={[styles.skeletonUser, { opacity: skeletonOpacity }]} />
+                            <Animated.View style={[styles.skeletonImage, { opacity: skeletonOpacity }]} />
+                        </View>
+                    )}
+                />
+            ) : (
+                <FlatList
+                    data={publicaciones}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => (
+                        <View style={styles.card}>
+                            <Text style={styles.title}>{item.title}</Text>
+                            <Text style={styles.description}>{item.description}</Text>
+                            {item.user && <Text style={styles.user}>Publicado por: {item.user.username}</Text>}
 
-                        {item.location && (
-                            <TouchableOpacity onPress={() => openInMaps(item.location)}>
-                                <Text style={styles.location}>📍 {item.location}</Text>
-                            </TouchableOpacity>
-                        )}
+                            {item.location && (
+                                <TouchableOpacity onPress={() => openInMaps(item.location)}>
+                                    <Text style={styles.location}>📍 {item.location}</Text>
+                                </TouchableOpacity>
+                            )}
 
-                        {item.image && (
-                            <Image source={{ uri: `http://192.168.100.10:5000${item.image}` }} style={styles.image} />
-                        )}
-                    </View>
-                )}
-                onEndReached={loadMore} // ✅ Cargar más cuando se llega al final
-                onEndReachedThreshold={0.5} // ✅ Se activa cuando el usuario está al 50% del último ítem
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} // ✅ Swipe para refrescar
-                ListFooterComponent={loading ? <ActivityIndicator size="large" color="#0000ff" /> : null} // ✅ Indicador de carga
-            />
+                            {item.image && (
+                                <Image source={{ uri: `http://192.168.100.10:5000${item.image}` }} style={styles.image} />
+                            )}
+                        </View>
+                    )}
+                    onEndReached={loadMore} // ✅ Cargar más cuando se llega al final
+                    onEndReachedThreshold={0.5} // ✅ Se activa cuando el usuario está al 50% del último ítem
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} // ✅ Swipe para refrescar
+                    ListFooterComponent={loadingMore ? <ActivityIndicator size="large" color="#0000ff" /> : null} // ✅ Indicador de carga al final
+                />
+            )}
         </View>
     );
 };
@@ -137,6 +188,35 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: 150,
+        marginTop: 10,
+        borderRadius: 10,
+    },
+    // 🎨 Skeleton Styles
+    skeletonTitle: {
+        width: '80%',
+        height: 20,
+        backgroundColor: '#ddd',
+        marginBottom: 10,
+        borderRadius: 4,
+    },
+    skeletonText: {
+        width: '60%',
+        height: 15,
+        backgroundColor: '#ddd',
+        marginBottom: 10,
+        borderRadius: 4,
+    },
+    skeletonUser: {
+        width: '40%',
+        height: 15,
+        backgroundColor: '#ddd',
+        marginBottom: 10,
+        borderRadius: 4,
+    },
+    skeletonImage: {
+        width: '100%',
+        height: 150,
+        backgroundColor: '#ddd',
         marginTop: 10,
         borderRadius: 10,
     },
