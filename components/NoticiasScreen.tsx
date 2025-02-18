@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, Linking, StyleSheet, RefreshControl, Animated, Easing } from 'react-native';
-import { WEATHER_API_KEY } from '@env';
-
+import { WEATHER_API_KEY, NEWS_API_KEY } from '@env';
 import axios from 'axios';
+
+
 
 type Publication = {
     _id: string;
@@ -19,6 +20,12 @@ type WeatherData = {
     condition: { text: string; icon: string };
 };
 
+type NewsArticle = {
+    title?: string;
+    source?: { name?: string }
+    url?: string;
+};
+
 const NoticiasScreen = () => {
     const [publicaciones, setPublicaciones] = useState<Publication[]>([]);
     const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -28,12 +35,29 @@ const NoticiasScreen = () => {
     const [loadingMore, setLoadingMore] = useState(false);
     const [totalPages, setTotalPages] = useState(1);
     const skeletonOpacity = useState(new Animated.Value(0.3))[0];
+    const [news, setNews] = useState<NewsArticle[]>([]);
 
     useEffect(() => {
         fetchPublicaciones(1, true); // ✅ Carga la primera página
         fetchWeather();
         startSkeletonAnimation();
+        fetchNews();
     }, []);
+
+
+    const fetchNews = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('https://newsapi.org/v2/top-headlines', {
+                params: { country: 'US',category: 'general', apiKey: NEWS_API_KEY, }
+            });
+            setNews(Array.isArray(response.data.articles) ? response.data.articles : []);
+        } catch (error) {
+            console.error('Error obteniendo noticias:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchWeather = async () => {
         try {
@@ -130,6 +154,8 @@ const NoticiasScreen = () => {
     return (
         
         <View style={styles.container}>
+           
+           
             <View style={styles.weatherContainer}>
             {weather && (
                 <View style={styles.weatherContent}>
@@ -140,12 +166,28 @@ const NoticiasScreen = () => {
                 </View>
             )}
         </View>
-    
-
-
-
-
-            <Text style={styles.pageHeader}>Publicaciones Recientes </Text>
+        <Text style={styles.header}> Noticias Internacionales</Text>
+            {loading ? (
+                <ActivityIndicator size="large" color="#007bff" />
+            ) : (
+                <FlatList
+                    data={news}
+                    keyExtractor={(_, index) => index.toString()}
+                    renderItem={({ item }) => (
+                        <View style={styles.newsCard}>
+                            <Text style={styles.newsTitle}>{item?.title || 'Título no disponible'}</Text>
+                            <TouchableOpacity onPress={() => item.url && Linking.openURL(item.url)}>
+                                <Text style={styles.newsLink}>Leer más</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                />
+            )}
+        
+           
+            <Text style={styles.pageHeader}> Publicaciones Recientes del Barrio </Text>
             {loading ? (
                 // ✅ Skeleton Loader mientras se cargan las publicaciones
                 <FlatList
@@ -196,10 +238,11 @@ const NoticiasScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 16,
         backgroundColor: '#f5f5f5',
     },
     pageHeader: { 
-        fontSize: 26, 
+        fontSize: 20, 
         fontWeight: 'bold', 
         color: '#1e90ff', 
         textAlign: 'center', 
@@ -207,7 +250,8 @@ const styles = StyleSheet.create({
         marginBottom: 5 
     },
     weatherContainer: {
-        padding: 20,
+        marginTop: 10,
+        padding: 5,
         backgroundColor: '#87CEEB',
         borderRadius: 20,
         alignItems: 'center',
@@ -227,7 +271,7 @@ const styles = StyleSheet.create({
         color: '#fff' },
     card: {
         padding: 15,
-        margin: 10,
+        margin: 5,
         backgroundColor: 'white',
         borderRadius: 10,
         shadowColor: '#000',
@@ -297,6 +341,22 @@ const styles = StyleSheet.create({
         marginTop: 10,
         borderRadius: 10,
     },
+    header: { fontSize: 20, fontWeight: 'bold', marginBottom: 8, color: '#007bff' },
+    newsTitle: { fontSize: 10, fontWeight: 'bold' },
+    newsSource: { fontSize: 10, color: '#888' },
+    newsCard: {
+        width: 340, // 📌 Ancho ampliado
+        height: 'auto', // 📌 Altura ampliada para bordes completos y contenido
+        marginRight: 16,
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        borderWidth: 1, // 📌 Añadidos bordes visibles
+        borderColor: '#ccc',
+        elevation: 5,
+    },
+    newsUrl: { fontSize: 10, color: '#1e90ff', marginTop: 3 },
+    newsLink: { fontSize: 12, color: '#1e90ff', fontWeight: 'bold', marginTop: 3, textAlign: 'center' },
 });
 
 export default NoticiasScreen;
