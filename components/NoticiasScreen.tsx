@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, ActivityIndicator, TouchableOpacity, Linking, StyleSheet, RefreshControl, Animated, Easing } from 'react-native';
+import { WEATHER_API_KEY } from '@env';
+
 import axios from 'axios';
 
 type Publication = {
@@ -12,9 +14,14 @@ type Publication = {
         username: string;
     };
 };
+type WeatherData = {
+    temp_c: number;
+    condition: { text: string; icon: string };
+};
 
 const NoticiasScreen = () => {
     const [publicaciones, setPublicaciones] = useState<Publication[]>([]);
+    const [weather, setWeather] = useState<WeatherData | null>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [page, setPage] = useState(1);
@@ -24,8 +31,25 @@ const NoticiasScreen = () => {
 
     useEffect(() => {
         fetchPublicaciones(1, true); // ✅ Carga la primera página
+        fetchWeather();
         startSkeletonAnimation();
     }, []);
+
+    const fetchWeather = async () => {
+        try {
+            const response = await axios.get(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=Ecuador&lang=es`);
+            const data = response.data.current;
+            setWeather({
+                temp_c: data.temp_c,
+                condition: {
+                    text: data.condition.text,
+                    icon: `https:${data.condition.icon}` // ✅ Incluye ícono de clima
+                }
+            });
+        } catch (error) {
+            console.error('Error obteniendo el clima:', error);
+        }
+    };
 
     // ✅ Animación del Skeleton Loader
     const startSkeletonAnimation = () => {
@@ -104,7 +128,23 @@ const NoticiasScreen = () => {
     };
 
     return (
+        
         <View style={styles.container}>
+            <View style={styles.weatherContainer}>
+            {weather && (
+                <View style={styles.weatherContent}>
+                    <Image source={{ uri: weather.condition.icon }} style={styles.weatherIcon} />
+                    <Text style={styles.weatherText}>
+                        {weather.temp_c}°C - {weather.condition.text}
+                    </Text>
+                </View>
+            )}
+        </View>
+    
+
+
+
+
             <Text style={styles.pageHeader}>Publicaciones Recientes </Text>
             {loading ? (
                 // ✅ Skeleton Loader mientras se cargan las publicaciones
@@ -159,13 +199,32 @@ const styles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
     },
     pageHeader: { 
-    fontSize: 26, 
-    fontWeight: 'bold', 
-    color: '#1e90ff', 
-    textAlign: 'center', 
-    marginTop: 30, 
-    marginBottom: 5 
+        fontSize: 26, 
+        fontWeight: 'bold', 
+        color: '#1e90ff', 
+        textAlign: 'center', 
+        marginTop: 5, 
+        marginBottom: 5 
     },
+    weatherContainer: {
+        padding: 20,
+        backgroundColor: '#87CEEB',
+        borderRadius: 20,
+        alignItems: 'center',
+    },
+    weatherContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    weatherIcon: {
+        width: 40,
+        height: 40,
+        marginRight: 8,
+    },
+    weatherText: { 
+        fontSize: 16, 
+        fontWeight: 'bold', 
+        color: '#fff' },
     card: {
         padding: 15,
         margin: 10,
