@@ -115,6 +115,7 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
 
     return (
         <View style={styles.container}>
+             <Text style={styles.pageHeader}>Ingrese la Publicación </Text>
             <Text style={styles.label}>Título:</Text>
             <TextInput value={title} onChangeText={setTitle} style={styles.input} placeholder="Ingrese el título" />
             
@@ -164,6 +165,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#f5f5f5',
         flex: 1,
+    },
+    pageHeader: { 
+        fontSize: 26, 
+        fontWeight: 'bold', 
+        color: '#1e90ff', 
+        textAlign: 'center', 
+        marginTop: 25, 
+        marginBottom: 5 
     },
     label: {
         alignSelf: 'flex-start',

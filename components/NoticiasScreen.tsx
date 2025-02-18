@@ -105,6 +105,7 @@ const NoticiasScreen = () => {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.pageHeader}>Publicaciones Recientes </Text>
             {loading ? (
                 // ✅ Skeleton Loader mientras se cargan las publicaciones
                 <FlatList
@@ -115,7 +116,9 @@ const NoticiasScreen = () => {
                             <Animated.View style={[styles.skeletonTitle, { opacity: skeletonOpacity }]} />
                             <Animated.View style={[styles.skeletonText, { opacity: skeletonOpacity }]} />
                             <Animated.View style={[styles.skeletonUser, { opacity: skeletonOpacity }]} />
+                            <Animated.View style={[styles.skeletonLocation, { opacity: skeletonOpacity }]} />
                             <Animated.View style={[styles.skeletonImage, { opacity: skeletonOpacity }]} />
+
                         </View>
                     )}
                 />
@@ -154,6 +157,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f5f5f5',
+    },
+    pageHeader: { 
+    fontSize: 26, 
+    fontWeight: 'bold', 
+    color: '#1e90ff', 
+    textAlign: 'center', 
+    marginTop: 30, 
+    marginBottom: 5 
     },
     card: {
         padding: 15,
@@ -208,6 +219,13 @@ const styles = StyleSheet.create({
     },
     skeletonUser: {
         width: '40%',
+        height: 15,
+        backgroundColor: '#ddd',
+        marginBottom: 10,
+        borderRadius: 4,
+    },
+    skeletonLocation: {
+        width: '60%',
         height: 15,
         backgroundColor: '#ddd',
         marginBottom: 10,
