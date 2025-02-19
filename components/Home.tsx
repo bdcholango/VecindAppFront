@@ -7,7 +7,6 @@ import { isAuthenticated } from '../utils/authMiddleware';
 import NoticiasScreen from '../components/NoticiasScreen';
 import PublicacionesScreen from '../components/PublicacionesScreen';
 import { StackNavigationProp } from '@react-navigation/stack';
-
 const Tab = createBottomTabNavigator();
 
 type HomeProps = {
@@ -57,6 +56,8 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
                     ),
                 }}
             />
+          
+
         </Tab.Navigator>
     );
 };
