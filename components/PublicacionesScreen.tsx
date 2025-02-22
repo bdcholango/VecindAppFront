@@ -8,7 +8,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ScrollView } from "react-native"; // 
+import { ScrollView } from "react-native"; 
 
 type PublicacionesScreenProps = {
     navigation: StackNavigationProp<any>;

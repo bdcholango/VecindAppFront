@@ -15,7 +15,7 @@ import {
 import { WEATHER_API_KEY, NEWS_API_KEY } from "@env";
 import axios from "axios";
 import InspirationalQuote from "../components/InspirationalQuote";
-
+import { useTheme } from '../context/ThemeContext';
 
 type Publication = {
   _id: string;
@@ -49,6 +49,7 @@ const NoticiasScreen = () => {
   const skeletonOpacity = useState(new Animated.Value(0.3))[0];
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const { theme } = useTheme();
 
   useEffect(() => {
     fetchPublicaciones(1, true); // ✅ Carga la primera página
@@ -181,16 +182,16 @@ const NoticiasScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* 📌 Sección del Clima en la parte superior */}
-      <View style={styles.weatherContainer}>
+      <View style={[styles.weatherContainer]}>
         {weather && (
-          <View style={styles.weatherContent}>
+          <View style={[styles.weatherContent, { backgroundColor: theme.background }]}>
             <Image
               source={{ uri: weather.condition.icon }}
               style={styles.weatherIcon}
             />
-            <Text style={styles.weatherText}>
+            <Text style={[styles.weatherText, { color: theme.text }]}>
               {weather.temp_c}°C - {weather.condition.text}
             </Text>
           </View>
@@ -223,8 +224,8 @@ const NoticiasScreen = () => {
               data={news}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item }) => (
-                <View style={styles.newsCard}>
-                  <Text style={styles.newsTitle}>
+                <View style={[styles.newsCard, { backgroundColor: theme.background }]}>
+                  <Text style={[styles.newsTitle, { color: theme.text }]}>
                     {item?.title || "Título no disponible"}
                   </Text>
                   <TouchableOpacity
@@ -238,7 +239,7 @@ const NoticiasScreen = () => {
             />
           )}
 
-          <View style={styles.paginationContainer}>
+          <View style={[styles.paginationContainer,{ backgroundColor: theme.background } ]}>
             {Array.from({ length: totalPages }, (_, index) => index + 1).map(
               (page) => (
                 <TouchableOpacity
@@ -249,7 +250,7 @@ const NoticiasScreen = () => {
                   ]}
                   onPress={() => setCurrentPage(page)}
                 >
-                  <Text style={styles.pageNumber}>{page}</Text>
+                  <Text style={[styles.pageNumber] }>{page}</Text>
                 </TouchableOpacity>
               )
             )}
@@ -258,14 +259,14 @@ const NoticiasScreen = () => {
 
         {/* 🔹 Frase Inspiradora a la derecha */}
 
-        <View style={styles.quoteContainer}>
+        <View style={[styles.quoteContainer,{ backgroundColor: theme.background }]}>
           <Text style={styles.header}>💡Frase del Dia💡</Text>
           <InspirationalQuote />
         </View>
       </View>
 
       {/* 📌 Publicaciones Recientes en la mitad inferior */}
-      <View style={styles.lowerContainer}>
+      <View style={[styles.lowerContainer, { backgroundColor: theme.background }]}>
         <Text style={styles.pageHeader}>
           Publicaciones Recientes del Barrio
         </Text>
@@ -301,11 +302,11 @@ const NoticiasScreen = () => {
             data={publicaciones}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
-              <View style={styles.card}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.description}>{item.description}</Text>
+              <View style={[styles.card, { backgroundColor: theme.background }]}>
+                <Text style={[styles.title, { color: theme.text }]}>{item.title}</Text>
+                <Text style={[styles.description, { color: theme.text }]}>{item.description}</Text>
                 {item.user && (
-                  <Text style={styles.user}>
+                  <Text style={[styles.user, { color: theme.text }]}>
                     Publicado por: {item.user.username}
                   </Text>
                 )}
@@ -352,6 +353,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 5,
     marginTop: 30,
+    borderColor: "#ccc",
+        
   },
 
   weatherContent: {
@@ -456,6 +459,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: "#000",
     elevation: 3,
+    borderColor: "#ccc",
+        borderWidth: 1,
   },
   title: {
     fontWeight: "bold",

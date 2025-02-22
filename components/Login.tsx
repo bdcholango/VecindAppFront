@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, Image, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, Button, Alert, Image, Text, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios, { AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
+
 
 type LoginProps = {
     navigation: StackNavigationProp<any>;
@@ -41,10 +42,11 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
     };
 
     return (
-        <View style={{ padding: 20, alignItems: 'center' }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <View style={{ padding: 20, alignItems: 'center'}}>
             <Image 
                 source={require('../assets/logo1.png')}
-                style={{ width: 300, height: 300, marginBottom: 0 }}
+                style={{ width: 400, height: 400, marginBottom: 0, }}
                 resizeMode="contain"
             />
 
@@ -92,6 +94,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
                 </Text>
             </TouchableOpacity>
         </View>
+        </ScrollView>
     );
 };
 

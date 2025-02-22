@@ -8,6 +8,7 @@ import Home from '../components/Home';
 import { isAuthenticated } from '../utils/authMiddleware';
 import { ActivityIndicator, View } from 'react-native';
 import UserProfile from '../components/UserProfile';
+import { ThemeProvider } from '../context/ThemeContext'; // Importamos el ThemeProvider
 
 
 const Stack = createStackNavigator();
@@ -34,9 +35,9 @@ const AppNavigator = () => {
     }
 
     return (
+        <ThemeProvider>
         <NavigationContainer>
             <Stack.Navigator initialRouteName={isLoggedIn ? "Home" : "Login"}>
-                
                 <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
                 <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
                 <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
@@ -44,6 +45,7 @@ const AppNavigator = () => {
 
             </Stack.Navigator>
         </NavigationContainer>
+        </ThemeProvider>
     );
 };
 

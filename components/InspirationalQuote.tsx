@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import { useTheme } from '../context/ThemeContext';
 
 const InspirationalQuote = () => {
     const [quote, setQuote] = useState<string | null>(null);
     const [author, setAuthor] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const { theme } = useTheme();
 
     // ✅ Función para obtener una frase de la API
     const fetchQuote = async () => {
@@ -27,15 +29,15 @@ const InspirationalQuote = () => {
     }, []);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
             
 
             {loading ? (
                 <ActivityIndicator size="large" color="#007bff" />
             ) : (
                 <View>
-                    <Text style={styles.quoteText}>"{quote}"</Text>
-                    <Text style={styles.author}>- {author}</Text>
+                    <Text style={[styles.quoteText, { color: theme.text }]}>"{quote}"</Text>
+                    <Text style={[styles.author, { color: theme.text }]}>- {author}</Text>
 
                     <TouchableOpacity onPress={fetchQuote} style={styles.button}>
                         <Text style={styles.buttonText}>🔄</Text>
@@ -58,6 +60,8 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 50, height: 6 },
         shadowRadius: 4,
         elevation: 3,
+        borderColor: "#ccc",
+        borderWidth: 1,
     },
     header: {
         fontSize: 10,

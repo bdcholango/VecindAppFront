@@ -4,6 +4,7 @@ import AppNavigator from './navigation/AppNavigator';
 import { registerForPushNotificationsAsync } from './utils/notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 // Configuración global de notificaciones
 Notifications.setNotificationHandler({
     handleNotification: async () => ({

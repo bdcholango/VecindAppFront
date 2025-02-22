@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert,  Switch } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useTheme } from '../context/ThemeContext';
+
 
 type UserProfileProps = {
     navigation: StackNavigationProp<any>;
@@ -10,6 +12,7 @@ type UserProfileProps = {
 
 const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
     const [username, setUsername] = useState<string | null>(null);
+    const { theme, isDarkMode, toggleTheme } = useTheme();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -39,10 +42,14 @@ const UserProfile: React.FC<UserProfileProps> = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
             <FontAwesome5 name="user-circle" size={100} color="#007bff" style={styles.icon} />
-            <Text style={styles.username}> {username || 'Usuario'}</Text>
-
+            <Text style={[styles.username, { color: theme.text }]}> {username || 'Usuario'}</Text>
+                {/* Modo Oscuro */}
+      <View style={styles.themeContainer}>
+        <Text style={[styles.label, { color: theme.text }]}>Modo Oscuro</Text>
+        <Switch value={isDarkMode} onValueChange={toggleTheme} />
+      </View>
             <TouchableOpacity onPress={confirmLogout} style={styles.logoutButton}>
                 <Text style={styles.logoutText}>Cerrar Sesión</Text>
             </TouchableOpacity>
@@ -75,6 +82,15 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    themeContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+      },
+      label: {
+        fontSize: 18,
+      },
 });
 
 export default UserProfile;
