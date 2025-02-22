@@ -7,6 +7,7 @@ import { isAuthenticated } from '../utils/authMiddleware';
 import NoticiasScreen from '../components/NoticiasScreen';
 import PublicacionesScreen from '../components/PublicacionesScreen';
 import { StackNavigationProp } from '@react-navigation/stack';
+import UserProfile from './UserProfile';
 const Tab = createBottomTabNavigator();
 
 type HomeProps = {
@@ -56,6 +57,15 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
                     ),
                 }}
             />
+            <Tab.Screen 
+    name="Perfil" 
+    component={UserProfile} 
+    options={{
+        tabBarIcon: ({ color, size }) => (
+            <FontAwesome5 name="user" size={size} color={color} />
+        ),
+    }}
+/>
           
 
         </Tab.Navigator>

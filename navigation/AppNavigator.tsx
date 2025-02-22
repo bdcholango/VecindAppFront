@@ -7,6 +7,7 @@ import Register from '../components/Register';
 import Home from '../components/Home';
 import { isAuthenticated } from '../utils/authMiddleware';
 import { ActivityIndicator, View } from 'react-native';
+import UserProfile from '../components/UserProfile';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,8 @@ const AppNavigator = () => {
                 <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
                 <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
                 <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+                <Stack.Screen name="UserProfile" component={UserProfile} />
+
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -38,7 +38,7 @@ const InspirationalQuote = () => {
                     <Text style={styles.author}>- {author}</Text>
 
                     <TouchableOpacity onPress={fetchQuote} style={styles.button}>
-                        <Text style={styles.buttonText}>🔄 Nueva Frase</Text>
+                        <Text style={styles.buttonText}>🔄</Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -48,14 +48,14 @@ const InspirationalQuote = () => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 10,
+        padding: 5,
         backgroundColor: '#fff',
         borderRadius: 10,
-        margin: 10,
+        margin: 5,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOpacity: 0.1,
-        shadowOffset: { width: 100, height: 4 },
+        shadowOffset: { width: 50, height: 6 },
         shadowRadius: 4,
         elevation: 3,
     },
@@ -81,13 +81,18 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#007bff',
-        padding: 20,
+        padding: 5,
         borderRadius: 8,
+        marginTop: 5,
+        
+      
+         
     },
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 10,
+        fontSize: 5,
+        textAlign: 'center',
     },
 });
 

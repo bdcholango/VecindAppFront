@@ -27,7 +27,9 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
             await AsyncStorage.setItem('userToken', response.data.accessToken);
             await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
             Alert.alert('Inicio de Sesión Exitoso', 'Bienvenido!');
+           
             navigation.navigate('Home');
+            await AsyncStorage.setItem('username', username); // ✅ Guarda el nombre del usuario
         } catch (error) {
             const axiosError = error as AxiosError<{ errors?: { msg: string }[], message?: string }>;
             if (axiosError.response?.data?.errors) {
