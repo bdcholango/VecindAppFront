@@ -8,6 +8,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { ScrollView } from "react-native"; // 
 
 type PublicacionesScreenProps = {
     navigation: StackNavigationProp<any>;
@@ -114,6 +115,7 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
     };
 
     return (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.container}>
              <Text style={styles.pageHeader}>Ingrese la Publicación </Text>
             <Text style={styles.label}>Título:</Text>
@@ -156,10 +158,16 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
                 <Text style={styles.submitButtonText}>Publicar</Text>
             </TouchableOpacity>
         </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+
+    scrollContainer: {
+        flexGrow: 1, // 📌 Permite que todo el contenido sea desplazable
+        paddingVertical: 20, // 📌 Espacio en la parte superior e inferior
+    },
     container: {
         padding: 20,
         alignItems: 'center',

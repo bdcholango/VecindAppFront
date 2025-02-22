@@ -28,7 +28,7 @@ const InspirationalQuote = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>💡 Frase Inspiradora del Día</Text>
+            
 
             {loading ? (
                 <ActivityIndicator size="large" color="#007bff" />

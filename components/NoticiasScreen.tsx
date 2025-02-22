@@ -16,6 +16,7 @@ import { WEATHER_API_KEY, NEWS_API_KEY } from "@env";
 import axios from "axios";
 import InspirationalQuote from "../components/InspirationalQuote";
 
+
 type Publication = {
   _id: string;
   title: string;
@@ -47,23 +48,31 @@ const NoticiasScreen = () => {
   const [totalPages, setTotalPages] = useState(1);
   const skeletonOpacity = useState(new Animated.Value(0.3))[0];
   const [news, setNews] = useState<NewsArticle[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchPublicaciones(1, true); // ✅ Carga la primera página
     fetchWeather();
     startSkeletonAnimation();
-    fetchNews();
-  }, []);
+    fetchNews(currentPage);
+  }, [currentPage]);
 
-  const fetchNews = async () => {
+  const fetchNews = async (page: number) => {
     setLoading(true);
     try {
       const response = await axios.get("https://newsapi.org/v2/top-headlines", {
-        params: { country: "US", category: "general", apiKey: NEWS_API_KEY },
+        params: {
+          country: "US",
+          category: "general",
+          apiKey: NEWS_API_KEY,
+          page: page,
+          pageSize: 5,
+        },
       });
       setNews(
         Array.isArray(response.data.articles) ? response.data.articles : []
       );
+      setTotalPages(Math.ceil(response.data.totalResults / 5)); // ✅ Calculamos el total de páginas
     } catch (error) {
       console.error("Error obteniendo noticias:", error);
     } finally {
@@ -193,8 +202,22 @@ const NoticiasScreen = () => {
         {/* 🔹 Noticias Internacionales a la izquierda */}
         <View style={styles.newsContainer}>
           <Text style={styles.header}>Noticias Internacionales</Text>
+
           {loading ? (
-            <ActivityIndicator size="large" color="#007bff" />
+            <FlatList
+              data={[1, 2]} // Simulamos 5 elementos vacíos
+              keyExtractor={(item) => `skeleton-${item}`}
+              renderItem={() => (
+                <View style={styles.newsCard}>
+                  <Animated.View
+                    style={[styles.skeletonTitleNews, { opacity: skeletonOpacity }]}
+                  />
+                  <Animated.View
+                    style={[styles.skeletonLinkNews, { opacity: skeletonOpacity }]}
+                  />
+                </View>
+              )}
+            />
           ) : (
             <FlatList
               data={news}
@@ -214,10 +237,29 @@ const NoticiasScreen = () => {
               showsVerticalScrollIndicator={false}
             />
           )}
+
+          <View style={styles.paginationContainer}>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+              (page) => (
+                <TouchableOpacity
+                  key={page}
+                  style={[
+                    styles.pageButton,
+                    currentPage === page && styles.activePage, // ✅ Resalta la página activa
+                  ]}
+                  onPress={() => setCurrentPage(page)}
+                >
+                  <Text style={styles.pageNumber}>{page}</Text>
+                </TouchableOpacity>
+              )
+            )}
+          </View>
         </View>
 
         {/* 🔹 Frase Inspiradora a la derecha */}
+
         <View style={styles.quoteContainer}>
+          <Text style={styles.header}>💡Frase del Dia💡</Text>
           <InspirationalQuote />
         </View>
       </View>
@@ -306,33 +348,34 @@ const styles = StyleSheet.create({
   },
 
   /* 📌 Clima */
-  weatherContainer: { 
-    alignItems: "center", 
+  weatherContainer: {
+    alignItems: "center",
     marginBottom: 5,
-    marginTop: 20, 
-    },
+    marginTop: 30,
+  },
 
-    weatherContent: { 
-        flexDirection: "row", 
-        alignItems: "center" 
-    },
-  weatherIcon: { 
-    width: 40, 
-    height: 40, 
-    marginRight: 10 
-    },
+  weatherContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  weatherIcon: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+  },
 
-  weatherText: { 
-    fontSize: 16, 
-    fontWeight: "bold", 
-    color: "#333" 
-    },
+  weatherText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
 
   /* 📌 Contenedor de Noticias + Inspiración */
-  upperContainer: { 
-    flex: 2, 
-    flexDirection: "row", 
-    paddingHorizontal: 10 },
+  upperContainer: {
+    flex: 2,
+    flexDirection: "row",
+    paddingHorizontal: 10,
+  },
 
   /* 📌 Noticias Internacionales */
   newsContainer: { flex: 2, padding: 10 },
@@ -341,6 +384,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 8,
     color: "#007bff",
+    textAlign: "center",
   },
   newsCard: {
     padding: 10,
@@ -358,27 +402,51 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: "#333",
   },
-  newsLink: { 
-    fontSize: 12, 
+  newsLink: {
+    fontSize: 12,
     textAlign: "center",
-    color: "#1e90ff", 
-    fontWeight: "bold" },
+    color: "#1e90ff",
+    fontWeight: "bold",
+  },
+
+  paginationContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 10,
+  },
+  pageButton: {
+    padding: 5,
+    marginHorizontal: 5,
+    marginVertical: 1,
+    backgroundColor: "#ddd",
+    borderRadius: 5,
+  },
+  activePage: {
+    backgroundColor: "#007bff",
+  },
+  pageNumber: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#fff",
+  },
 
   /* 📌 Frase Inspiradora */
-  quoteContainer: { 
-    flex: 1, 
-    justifyContent: "center", 
-    alignItems: "center" },
+  quoteContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 
   /* 📌 Publicaciones Recientes */
-  lowerContainer: { 
-    flex: 3, 
-    paddingHorizontal: 10 },
+  lowerContainer: {
+    flex: 3,
+    paddingHorizontal: 10,
+  },
   pageHeader: {
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
-    marginVertical: 10,
+    marginVertical: 0,
     color: "#1e90ff",
   },
   card: {
@@ -389,33 +457,72 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     elevation: 3,
   },
-  title: { 
-    fontWeight: "bold", 
-    fontSize: 16, 
-    marginBottom: 5 },
-  description: { 
-    color: "#666", 
-    marginBottom: 5 },
-  user: { 
-    fontStyle: "italic", 
-    color: "#333" },
-  location: { 
-    fontSize: 14, 
-    color: "#007bff", 
-    textDecorationLine: "underline" },
-  image: { 
+  title: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 5,
+    textAlign: "center",
+  },
+  description: {
+    color: "#666",
+    marginBottom: 5,
+  },
+  user: {
+    fontStyle: "italic",
+    color: "#333",
+  },
+  location: {
+    fontSize: 14,
+    color: "#007bff",
+    textDecorationLine: "underline",
+  },
+  image: {
     width: "100%",
-    height: 150, 
-    marginTop: 10, 
-    borderRadius: 10 },
+    height: 150,
+    marginTop: 10,
+    borderRadius: 10,
+  },
 
   // 🎨 Skeleton Styles
-  skeletonTitle: {
-    width: "80%",
+
+  skeletonTitleNews:{
+    width: "100%",
     height: 20,
     backgroundColor: "#ddd",
     marginBottom: 10,
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 }, 
+    shadowOpacity: 0.3, 
+    shadowRadius: 8, 
+    elevation: 5, 
+  },
+  skeletonLinkNews:{
+    width: "100%",
+    height: 20,
+    backgroundColor: "#ddd",
+    marginBottom: 10,
+    borderRadius: 4,
+    textAlign: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 }, 
+    shadowOpacity: 0.3, 
+    shadowRadius: 10, 
+    elevation: 5, 
+  },
+
+  skeletonTitle: {
+    width: "100%",
+    height: 20,
+    backgroundColor: "#ddd",
+    marginBottom: 10,
+    borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 }, 
+    shadowOpacity: 0.3,
+    shadowRadius: 10, 
+    elevation: 5, 
+    
   },
   skeletonText: {
     width: "60%",
@@ -423,6 +530,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     marginBottom: 10,
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 }, 
+    shadowOpacity: 0.3, 
+    shadowRadius: 10, 
+    elevation: 5, 
   },
   skeletonUser: {
     width: "40%",
@@ -430,6 +542,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     marginBottom: 10,
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 }, 
+    shadowOpacity: 0.3, 
+    shadowRadius: 10,
+    elevation: 5, 
   },
   skeletonLocation: {
     width: "60%",
@@ -437,6 +554,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     marginBottom: 10,
     borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 }, 
+    shadowOpacity: 0.3, 
+    shadowRadius: 10,
+    elevation: 5, 
   },
   skeletonImage: {
     width: "100%",
@@ -444,11 +566,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#ddd",
     marginTop: 10,
     borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 }, 
+    shadowOpacity: 0.3, 
+    shadowRadius: 10, 
+    elevation: 5, 
   },
 
-  newsSource: { fontSize: 10, color: "#888" },
+  newsSource: { 
+    fontSize: 10, 
+    color: "#888" 
+  },
 
-  newsUrl: { fontSize: 10, color: "#1e90ff", marginTop: 3 },
+  newsUrl: { 
+    fontSize: 10, 
+    color: "#1e90ff", 
+    marginTop: 3 
+  },
 });
 
 export default NoticiasScreen;

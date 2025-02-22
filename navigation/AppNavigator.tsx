@@ -9,6 +9,7 @@ import { isAuthenticated } from '../utils/authMiddleware';
 import { ActivityIndicator, View } from 'react-native';
 import UserProfile from '../components/UserProfile';
 
+
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
@@ -35,6 +36,7 @@ const AppNavigator = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName={isLoggedIn ? "Home" : "Login"}>
+                
                 <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
                 <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
                 <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
