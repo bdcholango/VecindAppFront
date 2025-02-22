@@ -6,12 +6,16 @@ const lightTheme = {
   background: '#ffffff',
   text: '#000000',
   cardBackground: '#f5f5f5',
+  tabBackground: "#ffffff", // ✅ Agregado
+  primary: "#007bff", // ✅ Agregado (Color principal)
 };
 
 const darkTheme = {
   background: '#121212',
   text: '#ffffff',
   cardBackground: '#1e1e1e',
+  tabBackground: "#121212", // ✅ Agregado
+  primary: "#1e90ff", // ✅ Agregado (Color principal)
 };
 
 // Crear el contexto del tema

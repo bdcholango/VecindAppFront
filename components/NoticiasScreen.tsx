@@ -209,7 +209,7 @@ const NoticiasScreen = () => {
               data={[1, 2]} // Simulamos 5 elementos vacíos
               keyExtractor={(item) => `skeleton-${item}`}
               renderItem={() => (
-                <View style={styles.newsCard}>
+                <View style={[styles.newsCard, { backgroundColor: theme.background }]}>
                   <Animated.View
                     style={[styles.skeletonTitleNews, { opacity: skeletonOpacity }]}
                   />
@@ -275,7 +275,7 @@ const NoticiasScreen = () => {
             data={[1, 2, 3, 4, 5]} // Simulamos 5 elementos vacíos
             keyExtractor={(item) => `skeleton-${item}`}
             renderItem={() => (
-              <View style={styles.card}>
+              <View style={[styles.card , { backgroundColor: theme.background }]}>
                 <Animated.View
                   style={[styles.skeletonTitle, { opacity: skeletonOpacity }]}
                 />

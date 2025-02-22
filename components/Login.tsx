@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 
+
 type LoginProps = {
     navigation: StackNavigationProp<any>;
 };

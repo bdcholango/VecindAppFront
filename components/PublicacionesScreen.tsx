@@ -8,7 +8,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ScrollView } from "react-native"; 
+import { ScrollView } from "react-native";
+import { useTheme } from '../context/ThemeContext'; 
 
 type PublicacionesScreenProps = {
     navigation: StackNavigationProp<any>;
@@ -21,6 +22,7 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
     const [date, setDate] = useState('');
     const [image, setImage] = useState<string | null>(null);
     const [type, setType] = useState('evento');
+    const { theme } = useTheme();
 
     // ✅ Obtener la ubicación y actualizar el input
     const handleGetLocation = async () => {
@@ -115,16 +117,16 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={[styles.scrollContainer, { backgroundColor: theme.background }]}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
              <Text style={styles.pageHeader}>Ingrese la Publicación </Text>
-            <Text style={styles.label}>Título:</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Título:</Text>
             <TextInput value={title} onChangeText={setTitle} style={styles.input} placeholder="Ingrese el título" />
             
-            <Text style={styles.label}>Descripción:</Text>
+            <Text style={[styles.label,{ color: theme.text }]}>Descripción:</Text>
             <TextInput value={description} onChangeText={setDescription} style={styles.input} placeholder="Ingrese la descripción" multiline />
             
-            <Text style={styles.label}>Ubicación:</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Ubicación:</Text>
             <View style={styles.locationContainer}>
                 <TextInput 
                     value={location} 
@@ -137,18 +139,18 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
                 </TouchableOpacity>
             </View>
 
-            <Text style={styles.label}>Fecha:</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Fecha:</Text>
             <TextInput value={date} onChangeText={setDate} style={styles.input} placeholder="Ingrese la fecha" />
             
             <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={() => pickImage('camera')} style={styles.imageButton}>
                     <FontAwesome5 name="camera" size={40} color="#007bff" />
-                    <Text style={styles.buttonText}>Tomar Foto</Text>
+                    <Text style={[styles.buttonText, { color: theme.text }]}>Tomar Foto</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity onPress={() => pickImage('gallery')} style={styles.imageButton}>
                     <FontAwesome5 name="images" size={40} color="#28a745" />
-                    <Text style={styles.buttonText}>Seleccionar Imagen</Text>
+                    <Text style={[styles.buttonText, { color: theme.text }]}>Seleccionar Imagen</Text>
                 </TouchableOpacity>
             </View>
             
@@ -212,6 +214,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: -15,
     },
     buttonContainer: {
         flexDirection: 'row',
