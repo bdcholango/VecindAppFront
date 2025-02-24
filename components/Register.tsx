@@ -18,7 +18,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
         setErrorMessage(null); // Resetear mensaje de error antes de enviar solicitud
 
         try {
-            await axios.post('http://192.168.100.10:5000/api/auth/register', {
+            await axios.post('http://192.168.100.17:5000/api/auth/register', {
                 username,
                 password,
             });

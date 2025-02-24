@@ -30,7 +30,7 @@ export async function registerForPushNotificationsAsync() {
     const userToken = await AsyncStorage.getItem('userToken');
     if (userToken) {
         try {
-            const response = await axios.post('http://192.168.100.10:5000/api/users/push-token', { pushToken: token }, {
+            const response = await axios.post('http://192.168.100.17:5000/api/users/push-token', { pushToken: token }, {
                 headers: { Authorization: `Bearer ${userToken}` }
             });
 

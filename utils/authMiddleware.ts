@@ -29,7 +29,7 @@ export const refreshToken = async (): Promise<boolean> => {
         const refreshToken = await AsyncStorage.getItem('refreshToken');
         if (!refreshToken) return false;
 
-        const response = await axios.post('http://192.168.100.10:5000/api/auth/refresh-token', { refreshToken });
+        const response = await axios.post('http://192.168.100.17:5000/api/auth/refresh-token', { refreshToken });
 
         await AsyncStorage.setItem('userToken', response.data.accessToken);
         return true;

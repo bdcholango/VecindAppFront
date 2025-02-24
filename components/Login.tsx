@@ -21,7 +21,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
         setErrorMessage(null); // Resetear mensaje de error antes de una nueva petición
 
         try {
-            const response = await axios.post('http://192.168.100.10:5000/api/auth/login', {
+            const response = await axios.post('http://192.168.100.17:5000/api/auth/login', {
                 username,
                 password,
             });

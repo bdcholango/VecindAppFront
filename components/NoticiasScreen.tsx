@@ -131,7 +131,7 @@ const NoticiasScreen = () => {
       }
 
       const response = await axios.get(
-        `http://192.168.100.10:5000/api/publications?page=${pageNumber}&limit=5`
+        `http://192.168.100.17:5000/api/publications?page=${pageNumber}&limit=5`
       );
 
       if (response.data && Array.isArray(response.data.publications)) {
@@ -319,7 +319,7 @@ const NoticiasScreen = () => {
 
                 {item.image && (
                   <Image
-                    source={{ uri: `http://192.168.100.10:5000${item.image}` }}
+                    source={{ uri: `http://192.168.100.17:5000${item.image}` }}
                     style={styles.image}
                   />
                 )}

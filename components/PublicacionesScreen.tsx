@@ -92,7 +92,7 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
         }
 
         try {
-            await axios.post('http://192.168.100.10:5000/api/publications/create', formData, {
+            await axios.post('http://192.168.100.17:5000/api/publications/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
@@ -101,14 +101,14 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({ navigation })
 
             await Notifications.scheduleNotificationAsync({
                 content: {
-                    title: '📢 Publicación creada',
-                    body: 'Tu publicación se ha creado correctamente 🎉',
+                    title: '📢 Se ha creado una nueva publicación',
+                    body: '🎉Revisa las Publicaciones Recientes🎉',
                     sound: true,
                 },
                 trigger: null,
             });
 
-            Alert.alert('Éxito', 'Publicación creada exitosamente');
+            Alert.alert('Éxito', 'Se ha creado tu publicación correctamente');
             navigation.navigate('Noticias');
 
         } catch (error) {
