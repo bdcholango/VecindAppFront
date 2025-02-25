@@ -15,7 +15,7 @@ import {
 import { WEATHER_API_KEY, NEWS_API_KEY } from "@env";
 import axios from "axios";
 import InspirationalQuote from "../components/InspirationalQuote";
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from "../context/ThemeContext";
 
 type Publication = {
   _id: string;
@@ -52,7 +52,7 @@ const NoticiasScreen = () => {
   const { theme } = useTheme();
 
   useEffect(() => {
-    fetchPublicaciones(1, true); // ✅ Carga la primera página
+    fetchPublicaciones(1, true); //Carga la primera página
     fetchWeather();
     startSkeletonAnimation();
     fetchNews(currentPage);
@@ -73,7 +73,7 @@ const NoticiasScreen = () => {
       setNews(
         Array.isArray(response.data.articles) ? response.data.articles : []
       );
-      setTotalPages(Math.ceil(response.data.totalResults / 5)); // ✅ Calculamos el total de páginas
+      setTotalPages(Math.ceil(response.data.totalResults / 5)); //Calculamos el total de páginas
     } catch (error) {
       console.error("Error obteniendo noticias:", error);
     } finally {
@@ -91,7 +91,7 @@ const NoticiasScreen = () => {
         temp_c: data.temp_c,
         condition: {
           text: data.condition.text,
-          icon: `https:${data.condition.icon}`, // ✅ Incluye ícono de clima
+          icon: `https:${data.condition.icon}`, //Incluye ícono de clima
         },
       });
     } catch (error) {
@@ -99,7 +99,7 @@ const NoticiasScreen = () => {
     }
   };
 
-  // ✅ Animación del Skeleton Loader
+  //Animación del Skeleton Loader
   const startSkeletonAnimation = () => {
     Animated.loop(
       Animated.sequence([
@@ -119,9 +119,9 @@ const NoticiasScreen = () => {
     ).start();
   };
 
-  // ✅ Función para obtener publicaciones con paginación
+  //Función para obtener publicaciones con paginación
   const fetchPublicaciones = async (pageNumber: number, reset = false) => {
-    if (pageNumber > totalPages) return; // ✅ No seguir si ya estamos en la última página
+    if (pageNumber > totalPages) return; //No seguir si ya estamos en la última página
 
     try {
       if (reset) {
@@ -155,21 +155,21 @@ const NoticiasScreen = () => {
     }
   };
 
-  // ✅ Función para refrescar (swipe down)
+  //Función para refrescar (swipe down)
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchPublicaciones(1, true); // ✅ Carga desde la primera página
+    await fetchPublicaciones(1, true); //Carga desde la primera página
     setRefreshing(false);
   };
 
-  // ✅ Función para cargar más publicaciones cuando se hace scroll hasta el final
+  // función para cargar más publicaciones cuando se hace scroll hasta el final
   const loadMore = () => {
     if (!loadingMore && page < totalPages) {
       fetchPublicaciones(page + 1);
     }
   };
 
-  // ✅ Función para abrir Google Maps según el formato de ubicación
+  // funcion abrir Google Maps según el formato de ubicación
   const openInMaps = (location: string) => {
     if (location.startsWith("https://www.google.com/maps")) {
       Linking.openURL(location);
@@ -183,10 +183,14 @@ const NoticiasScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* 📌 Sección del Clima en la parte superior */}
       <View style={[styles.weatherContainer]}>
         {weather && (
-          <View style={[styles.weatherContent, { backgroundColor: theme.background }]}>
+          <View
+            style={[
+              styles.weatherContent,
+              { backgroundColor: theme.background },
+            ]}
+          >
             <Image
               source={{ uri: weather.condition.icon }}
               style={styles.weatherIcon}
@@ -198,23 +202,32 @@ const NoticiasScreen = () => {
         )}
       </View>
 
-      {/* 📌 Noticias Internacionales e Inspiración en una sola fila */}
       <View style={styles.upperContainer}>
-        {/* 🔹 Noticias Internacionales a la izquierda */}
         <View style={styles.newsContainer}>
           <Text style={styles.header}>Noticias Internacionales</Text>
 
           {loading ? (
             <FlatList
-              data={[1, 2]} // Simulamos 5 elementos vacíos
+              data={[1, 2]}
               keyExtractor={(item) => `skeleton-${item}`}
               renderItem={() => (
-                <View style={[styles.newsCard, { backgroundColor: theme.background }]}>
+                <View
+                  style={[
+                    styles.newsCard,
+                    { backgroundColor: theme.background },
+                  ]}
+                >
                   <Animated.View
-                    style={[styles.skeletonTitleNews, { opacity: skeletonOpacity }]}
+                    style={[
+                      styles.skeletonTitleNews,
+                      { opacity: skeletonOpacity },
+                    ]}
                   />
                   <Animated.View
-                    style={[styles.skeletonLinkNews, { opacity: skeletonOpacity }]}
+                    style={[
+                      styles.skeletonLinkNews,
+                      { opacity: skeletonOpacity },
+                    ]}
                   />
                 </View>
               )}
@@ -224,7 +237,12 @@ const NoticiasScreen = () => {
               data={news}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item }) => (
-                <View style={[styles.newsCard, { backgroundColor: theme.background }]}>
+                <View
+                  style={[
+                    styles.newsCard,
+                    { backgroundColor: theme.background },
+                  ]}
+                >
                   <Text style={[styles.newsTitle, { color: theme.text }]}>
                     {item?.title || "Título no disponible"}
                   </Text>
@@ -239,43 +257,50 @@ const NoticiasScreen = () => {
             />
           )}
 
-          <View style={[styles.paginationContainer,{ backgroundColor: theme.background } ]}>
+          <View
+            style={[
+              styles.paginationContainer,
+              { backgroundColor: theme.background },
+            ]}
+          >
             {Array.from({ length: totalPages }, (_, index) => index + 1).map(
               (page) => (
                 <TouchableOpacity
                   key={page}
                   style={[
                     styles.pageButton,
-                    currentPage === page && styles.activePage, // ✅ Resalta la página activa
+                    currentPage === page && styles.activePage, // Resalta la página activa
                   ]}
                   onPress={() => setCurrentPage(page)}
                 >
-                  <Text style={[styles.pageNumber] }>{page}</Text>
+                  <Text style={[styles.pageNumber]}>{page}</Text>
                 </TouchableOpacity>
               )
             )}
           </View>
         </View>
 
-        {/* 🔹 Frase Inspiradora a la derecha */}
-
-        <View style={[styles.quoteContainer,{ backgroundColor: theme.background }]}>
+        <View
+          style={[styles.quoteContainer, { backgroundColor: theme.background }]}
+        >
           <Text style={styles.header}>💡Frase del Dia💡</Text>
           <InspirationalQuote />
         </View>
       </View>
-
-      {/* 📌 Publicaciones Recientes en la mitad inferior */}
-      <View style={[styles.lowerContainer, { backgroundColor: theme.background }]}>
+      <View
+        style={[styles.lowerContainer, { backgroundColor: theme.background }]}
+      >
         <Text style={styles.pageHeader}>
           Publicaciones Recientes del Barrio
         </Text>
         {loading ? (
           <FlatList
-            data={[1, 2, 3, 4, 5]} // Simulamos 5 elementos vacíos
+            data={[1, 2, 3, 4, 5]}
             keyExtractor={(item) => `skeleton-${item}`}
             renderItem={() => (
-              <View style={[styles.card , { backgroundColor: theme.background }]}>
+              <View
+                style={[styles.card, { backgroundColor: theme.background }]}
+              >
                 <Animated.View
                   style={[styles.skeletonTitle, { opacity: skeletonOpacity }]}
                 />
@@ -302,9 +327,15 @@ const NoticiasScreen = () => {
             data={publicaciones}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
-              <View style={[styles.card, { backgroundColor: theme.background }]}>
-                <Text style={[styles.title, { color: theme.text }]}>{item.title}</Text>
-                <Text style={[styles.description, { color: theme.text }]}>{item.description}</Text>
+              <View
+                style={[styles.card, { backgroundColor: theme.background }]}
+              >
+                <Text style={[styles.title, { color: theme.text }]}>
+                  {item.title}
+                </Text>
+                <Text style={[styles.description, { color: theme.text }]}>
+                  {item.description}
+                </Text>
                 {item.user && (
                   <Text style={[styles.user, { color: theme.text }]}>
                     Publicado por: {item.user.username}
@@ -348,13 +379,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
 
-  /* 📌 Clima */
   weatherContainer: {
     alignItems: "center",
     marginBottom: 5,
     marginTop: 30,
     borderColor: "#ccc",
-        
   },
 
   weatherContent: {
@@ -373,14 +402,12 @@ const styles = StyleSheet.create({
     color: "#333",
   },
 
-  /* 📌 Contenedor de Noticias + Inspiración */
   upperContainer: {
     flex: 2,
     flexDirection: "row",
     paddingHorizontal: 10,
   },
 
-  /* 📌 Noticias Internacionales */
   newsContainer: { flex: 2, padding: 10 },
   header: {
     fontSize: 10,
@@ -433,14 +460,12 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 
-  /* 📌 Frase Inspiradora */
   quoteContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
 
-  /* 📌 Publicaciones Recientes */
   lowerContainer: {
     flex: 3,
     paddingHorizontal: 10,
@@ -460,7 +485,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     elevation: 3,
     borderColor: "#ccc",
-        borderWidth: 1,
+    borderWidth: 1,
   },
   title: {
     fontWeight: "bold",
@@ -488,21 +513,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  // 🎨 Skeleton Styles
-
-  skeletonTitleNews:{
+  skeletonTitleNews: {
     width: "100%",
     height: 20,
     backgroundColor: "#ddd",
     marginBottom: 10,
     borderRadius: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 }, 
-    shadowOpacity: 0.3, 
-    shadowRadius: 8, 
-    elevation: 5, 
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  skeletonLinkNews:{
+  skeletonLinkNews: {
     width: "100%",
     height: 20,
     backgroundColor: "#ddd",
@@ -510,10 +533,10 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     textAlign: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 }, 
-    shadowOpacity: 0.3, 
-    shadowRadius: 10, 
-    elevation: 5, 
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
   },
 
   skeletonTitle: {
@@ -523,11 +546,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 }, 
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
-    shadowRadius: 10, 
-    elevation: 5, 
-    
+    shadowRadius: 10,
+    elevation: 5,
   },
   skeletonText: {
     width: "60%",
@@ -536,10 +558,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 }, 
-    shadowOpacity: 0.3, 
-    shadowRadius: 10, 
-    elevation: 5, 
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
   },
   skeletonUser: {
     width: "40%",
@@ -548,10 +570,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 }, 
-    shadowOpacity: 0.3, 
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
     shadowRadius: 10,
-    elevation: 5, 
+    elevation: 5,
   },
   skeletonLocation: {
     width: "60%",
@@ -560,10 +582,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 4,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 }, 
-    shadowOpacity: 0.3, 
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
     shadowRadius: 10,
-    elevation: 5, 
+    elevation: 5,
   },
   skeletonImage: {
     width: "100%",
@@ -572,21 +594,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 }, 
-    shadowOpacity: 0.3, 
-    shadowRadius: 10, 
-    elevation: 5, 
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
   },
 
-  newsSource: { 
-    fontSize: 10, 
-    color: "#888" 
+  newsSource: {
+    fontSize: 10,
+    color: "#888",
   },
 
-  newsUrl: { 
-    fontSize: 10, 
-    color: "#1e90ff", 
-    marginTop: 3 
+  newsUrl: {
+    fontSize: 10,
+    color: "#1e90ff",
+    marginTop: 3,
   },
 });
 

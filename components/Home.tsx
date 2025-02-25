@@ -10,7 +10,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import UserProfile from "./UserProfile";
 import { useTheme } from "../context/ThemeContext";
 
-
 const Tab = createBottomTabNavigator();
 
 type HomeProps = {
@@ -35,8 +34,15 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.background }}>
-        <ActivityIndicator size="large" color={theme.primary}/>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: theme.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
@@ -46,11 +52,11 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: theme.tabBackground, // ✅ Fondo del tab en modo oscuro/claro
-          borderTopWidth: 0, // ✅ Eliminar la línea superior
+          backgroundColor: theme.tabBackground, //Fondo del tab en modo oscuro/claro
+          borderTopWidth: 0, //Eliminacion la línea superior
         },
-        tabBarActiveTintColor: isDarkMode ? "#1e90ff" : "#007bff", // ✅ Color de iconos activos
-        tabBarInactiveTintColor: isDarkMode ? "#aaa" : "#666", // ✅ Color de iconos inactivos
+        tabBarActiveTintColor: isDarkMode ? "#1e90ff" : "#007bff", //Color de iconos activos
+        tabBarInactiveTintColor: isDarkMode ? "#aaa" : "#666", //Color de iconos inactivos
       }}
     >
       <Tab.Screen
