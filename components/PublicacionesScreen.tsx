@@ -124,8 +124,13 @@ const PublicacionesScreen: React.FC<PublicacionesScreenProps> = ({
         },
         trigger: null,
       });
-
       Alert.alert("Éxito", "Se ha creado tu publicación correctamente");
+      setTitle("");
+      setDescription("");
+      setLocation("");
+      setDate("");
+      setImage("");
+     
       navigation.navigate("Noticias");
     } catch (error) {
       Alert.alert("Error", "No se pudo crear la publicación");

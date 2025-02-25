@@ -311,6 +311,9 @@ const NoticiasScreen = () => {
                   style={[styles.skeletonUser, { opacity: skeletonOpacity }]}
                 />
                 <Animated.View
+                  style={[styles.skeletonUbi, { opacity: skeletonOpacity }]}
+                />
+                <Animated.View
                   style={[
                     styles.skeletonLocation,
                     { opacity: skeletonOpacity },
@@ -341,10 +344,11 @@ const NoticiasScreen = () => {
                     Publicado por: {item.user.username}
                   </Text>
                 )}
-
+                <Text style={[ styles.ubi, {color: theme.text }]}>Ubicación: </Text>  
                 {item.location && (
+                  
                   <TouchableOpacity onPress={() => openInMaps(item.location)}>
-                    <Text style={styles.location}>📍 {item.location}</Text>
+                    <Text style={styles.location}>{item.location}</Text>
                   </TouchableOpacity>
                 )}
 
@@ -498,7 +502,11 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   user: {
+    color: "#333",
+  },
+  ubi: {
     fontStyle: "italic",
+    marginTop: 5,
     color: "#333",
   },
   location: {
@@ -575,8 +583,20 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
+  skeletonUbi: {
+    width: "20%",
+    height: 15,
+    backgroundColor: "#ddd",
+    marginBottom: 10,
+    borderRadius: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
+  },
   skeletonLocation: {
-    width: "60%",
+    width: "80%",
     height: 15,
     backgroundColor: "#ddd",
     marginBottom: 10,
